@@ -59,10 +59,10 @@ plot1 + scale_color_brewer(palette="Dark2")
 
 Para exportar el gráfico:
 
-``
+```
 setwd()
 ggsave(file="movilidad_uruguay.png",width = 40, height = 28, units = "cm")
-``
+```
 
 También podemos exportar la base en formato excel
 
