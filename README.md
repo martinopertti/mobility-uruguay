@@ -74,5 +74,7 @@ Después filtramos la base por Montevideo y repetimos el procedimiento
 mvd <- uru %>% filter(sub_region_1 == "Montevideo Department")
 `
 
+![](movilidad_montevideo.png)
+
 
 
