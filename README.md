@@ -21,3 +21,5 @@ La base de datos "uru" contiene los cambios en movilidad respecto a la mediana d
 uru <-google_mobility %>%
   filter(country_region_code == "UY")
 ``
+
+![](movilidad_uruguay.png)
