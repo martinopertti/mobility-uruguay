@@ -14,8 +14,10 @@ library(ggplot2)
 library(tidyverse)
 `````````
 
+El siguiente código de R tiene como objetivo facilitar y automatizar el procesamiento de estos datos que Google reporta diariamente. Google elabora un reporte semanal con el procesamiento de estos datos (para acceder al último click [aquí](https://www.gstatic.com/covid19/mobility/2020-04-17_UY_Mobility_Report_en.pdf)), este código facilita el análisis de estos datos diariamente. Por información más detallada de la metodología con la que se recabaron estos datos click [aquí](https://www.google.com/covid19/mobility/). 
+
 El paquete "covdata" nos permite descargar la información directamente desde R. 
-La base de datos "uru" contiene los cambios en movilidad respecto a la mediana de actividad (de cada día de la semana) entre el 3 de enero y el 6 de febrero para Uruguay en su conjunto y cada departamento por separado
+La base de datos "uru" contiene los cambios en movilidad respecto a la mediana de actividad (de cada día de la semana) entre el 3 de enero y el 6 de febrero para Uruguay en su conjunto y cada departamento por separado.
 
 ``
 uru <-google_mobility %>%
