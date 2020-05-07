@@ -26,7 +26,7 @@ setwd()
 google_mobility <- read.csv("Global_Mobility_Report.csv")
 `````
 
-Luego nos quedamos con los datos de Uruguay únicamente y obtenemos la base de datos "uru" que contiene los cambios en movilidad respecto a la mediana de actividad (de cada día de la semana) entre el 3 de enero y el 6 de febrero para Uruguay en su conjunto y cada departamento por separado.
+Luego nos quedamos con los datos de Uruguay únicamente y obtenemos la base de datos "uru" que contiene los cambios en movilidad respecto a la mediana de actividad (de cada día de la semana) entre el 3 de enero y el 6 de febrero para Uruguay en su conjunto y cada departamento por separado. La línea vertical corresponde al día en que se detectan los primeros casos de coronavirus en Uruguay.
 
 `````
 uru <-google_mobility %>%
@@ -68,8 +68,11 @@ plot1 <- ggplot(uru_gral, aes(fecha, movilidad, colour = tipo)) +
   facet_wrap(~ tipo) + theme_minimal(base_size = 16) + 
   theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm")) + 
   geom_hline(yintercept=0, linetype="dashed",) +
-  geom_vline(xintercept=as.numeric(uru_gral$fecha[19]), size=1) 
-  
+  geom_vline(xintercept=as.numeric(uru_gral$fecha[19]), size=1) +  ylim(-90, 90) +
+  scale_x_date(date_labels = "%b/%d", date_breaks = "2 weeks") +
+  labs(x = "Fecha", y = "Movilidad respecto a línea de base") +
+  ggtitle("Movilidad en Uruguay respecto al (03-01 a 06-02) según datos de Google")
+
 plot1 + scale_color_brewer(palette="Dark2")
 ````````
 
@@ -96,5 +99,46 @@ mvd <- uru %>% filter(sub_region_1 == "Montevideo Department")
 
 ![](movilidad_montevideo.png)
 
+Luego vamos a tratar de sacar un poco el ruido de la serie y agregarle información, particularmente al mirar movilidad hacia lugares de trabajo. Para ello eliminamos los fines de semana y feriados. También dividimos los datos en 3 etapas: normalidad (previo a los primeros casos de coronavirus en Uruguay), cuarentena no obligatoria (luego de la detección de los primero casos hasta la conferencia de prensa donde se introduce el concepto de "nueva normalidad" y la nueva normalidad. 
+
+````````
+uru_trab <- uru_gral %>% filter(tipo=="Lugares de trabajo")
+uru_trab$entresemana <- !(weekdays(as.Date(uru_trab$fecha)) %in% c('Saturday','Sunday')) 
+uru_trab <- uru_trab %>% filter(entresemana=="TRUE")
+uru_trab <- uru_trab %>% filter(!fecha=="2020-05-01")
+uru_trab <- uru_trab %>% filter(!fecha=="2020-02-24")
+uru_trab <- uru_trab %>% filter(!fecha=="2020-02-25")
+uru_trab <- uru_trab %>% filter(!fecha=="2020-04-09")
+uru_trab <- uru_trab %>% filter(!fecha=="2020-04-10")
+
+uru_trab$etapa <- "Cuarentena no obligatoria"
+uru_trab$etapa <- ifelse(uru_trab$fecha < as.POSIXct("2020-03-13"), "Normalidad", uru_trab$etapa)
+uru_trab$etapa <- ifelse(uru_trab$fecha > as.POSIXct("2020-04-17"), "Nueva normalidad", uru_trab$etapa)
+uru_trab$etapa <- factor(uru_trab$etapa, c("Normalidad", "Cuarentena no obligatoria", "Nueva normalidad"), ordered=TRUE)
+````````
+
+Para graficar esto cambiamos un poco el formato del gráfico:
+
+````````
+plot3 <- ggplot(uru_trab, aes(fecha, movilidad, color=etapa)) +
+  geom_point(aes(colour=etapa, alpha = 0.5, size = 4)) +
+  geom_smooth(colour="Grey",alpha=.25,method = "loess",  se = T)+
+  theme_minimal(base_size = 16) + 
+  theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm")) + 
+  geom_hline(yintercept=0, linetype="dashed",) +
+  geom_vline(xintercept = as.numeric(as.Date("2020-03-13"))) + 
+  geom_vline(xintercept = as.numeric(as.Date("2020-04-17"))) +
+  annotate(geom="text",x=as.Date("2020-02-25"), y=29,label="Normalidad", size=8) +
+  annotate(geom="text",x=as.Date("2020-03-30"), y=29,label="Cuarentena no obligatoria", size=8) +
+  annotate(geom="text",x=as.Date("2020-04-25"), y=29,label="Nueva normalidad", size=8) +
+  scale_x_date(date_labels = "%b/%d", date_breaks = "1 week") +
+  labs(x = "Fecha", y = "Movilidad respecto a línea de base") +
+  ggtitle("Movilidad hacia lugares de trabajo en Uruguay respecto al (03-01 a 06-02) en días hábiles, según datos de Google")
+
+plot3 + scale_color_manual(values=c("darkgreen", "sienna2", "orange")) 
+````````
+
+
+![](movilidad_etapas.png)
 
 
