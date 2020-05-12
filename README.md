@@ -65,13 +65,24 @@ plot1 <- ggplot(uru_gral, aes(fecha, movilidad, colour = tipo)) +
   geom_text(data = uru_gral[uru_gral$fecha == max(uru_gral$fecha),],
             aes(x =fecha, label=movilidad,
                 vjust = -2, fontface = "bold"))+ 
-  facet_wrap(~ tipo) + theme_minimal(base_size = 16) + 
-  theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm")) + 
+  facet_wrap(~ tipo) + theme_minimal(base_size = 20) + 
+  theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm"),
+        text=element_text(size=16,  family="Times New Roman"), 
+        plot.title = element_text(size=28, face="bold"), 
+        axis.line = element_line(colour = "grey50", size = 1),
+        strip.text = element_text(size=16),
+        axis.title  = element_text(size=20),
+        plot.subtitle = element_text(size=22),
+        plot.caption = element_text(size=14),
+        axis.text.x = element_text(size=14),
+        axis.text.y = element_text(size=16)) + 
   geom_hline(yintercept=0, linetype="dashed",) +
   geom_vline(xintercept=as.numeric(uru_gral$fecha[19]), size=1) +  ylim(-90, 90) +
   scale_x_date(date_labels = "%b/%d", date_breaks = "2 weeks") +
-  labs(x = "Fecha", y = "Movilidad respecto a línea de base") +
-  ggtitle("Movilidad en Uruguay respecto al (03-01 a 06-02) según datos de Google")
+  labs(x = "Fecha", y = "Movilidad respecto a línea de base", 
+       title = "Movilidad en Uruguay",
+       subtitle = "Línea de base = 03-01 a 06-02",
+       caption = "Fuente: Google Mobility Reports")
 
 plot1 + scale_color_brewer(palette="Dark2")
 ````````
@@ -123,17 +134,28 @@ Para graficar esto cambiamos un poco el formato del gráfico:
 plot3 <- ggplot(uru_trab, aes(fecha, movilidad, color=etapa)) +
   geom_point(aes(colour=etapa, alpha = 0.5, size = 4)) +
   geom_smooth(colour="Grey",alpha=.25,method = "loess",  se = T)+
-  theme_minimal(base_size = 16) + 
-  theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm")) + 
+  theme_minimal() + 
+  theme(legend.position="none", plot.margin=unit(c(2,2,2.5,2.2),"cm"),
+        text=element_text(size=16,  family="Times New Roman"), 
+        plot.title = element_text(size=28, face="bold"), 
+        axis.line = element_line(colour = "grey50", size = 1),
+        strip.text = element_text(size=16),
+        axis.title  = element_text(size=20),
+        plot.subtitle = element_text(size=22),
+        plot.caption = element_text(size=14),
+        axis.text.x = element_text(size=14),
+        axis.text.y = element_text(size=16)) + 
   geom_hline(yintercept=0, linetype="dashed",) +
   geom_vline(xintercept = as.numeric(as.Date("2020-03-13"))) + 
   geom_vline(xintercept = as.numeric(as.Date("2020-04-17"))) +
-  annotate(geom="text",x=as.Date("2020-02-25"), y=29,label="Normalidad", size=8) +
-  annotate(geom="text",x=as.Date("2020-03-30"), y=29,label="Cuarentena no obligatoria", size=8) +
-  annotate(geom="text",x=as.Date("2020-04-25"), y=29,label="Nueva normalidad", size=8) +
+  annotate(geom="text",x=as.Date("2020-02-25"), y=29,label="Normalidad", size=8, family="Times New Roman") +
+  annotate(geom="text",x=as.Date("2020-03-30"), y=29,label="Cuarentena no obligatoria", size=8, family="Times New Roman") +
+  annotate(geom="text",x=as.Date("2020-04-28"), y=29,label="Nueva normalidad", size=8, family="Times New Roman") +
   scale_x_date(date_labels = "%b/%d", date_breaks = "1 week") +
-  labs(x = "Fecha", y = "Movilidad respecto a línea de base") +
-  ggtitle("Movilidad hacia lugares de trabajo en Uruguay respecto al (03-01 a 06-02) en días hábiles, según datos de Google")
+  labs(x = "Fecha", y = "Movilidad respecto a línea de base", 
+       title = "Movilidad hacia lugares de trabajo en Uruguay en días hábiles",
+       subtitle = "Línea de base = 03-01 a 06-02",
+       caption = "Fuente: Google Mobility Reports")
 
 plot3 + scale_color_manual(values=c("darkgreen", "sienna2", "orange")) 
 ````````
